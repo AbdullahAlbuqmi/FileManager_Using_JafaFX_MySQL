@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+
+<StackPane xmlns="http://javafx.com/javafx/11.0.1"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="controllers.MainController">
+
+    <!-- Login View -->
+    <VBox fx:id="loginView"
+          spacing="15" alignment="CENTER" prefWidth="400" prefHeight="350"
+          styleClass="login-container" visible="true" managed="true">
+
+        <padding>
+            <Insets bottom="30" left="30" right="30" top="30"/>
+        </padding>
+
+        <!-- Header -->
+        <VBox alignment="CENTER" spacing="5">
+            <Label text="🔐" styleClass="login-icon" style="-fx-font-size: 48px;"/>
+            <Label text="File Manager" styleClass="login-title" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+            <Label fx:id="loginMessage" text="Please sign in to continue" styleClass="login-subtitle" style="-fx-font-size: 14px; -fx-text-fill: #666;"/>
+        </VBox>
+
+        <!-- Login Form -->
+        <VBox spacing="15" maxWidth="300">
+            <!-- Username Field -->
+            <VBox spacing="5">
+                <Label text="Username:" styleClass="field-label" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="usernameField" promptText="Enter username" styleClass="login-field" 
+                          style="-fx-pref-height: 35px; -fx-font-size: 14px;"/>
+            </VBox>
+
+            <!-- Password Field -->
+            <VBox spacing="5">
+                <Label text="Password:" styleClass="field-label" style="-fx-font-weight: bold;"/>
+                <PasswordField fx:id="passwordField" promptText="Enter password" styleClass="login-field"
+                              style="-fx-pref-height: 35px; -fx-font-size: 14px;"/>
+            </VBox>
+
+            <!-- Role Selection (for sign up) -->
+            <VBox spacing="5" fx:id="roleSection" visible="false" managed="false">
+                <Label text="Role:" styleClass="field-label" style="-fx-font-weight: bold;"/>
+                <ComboBox fx:id="roleComboBox" maxWidth="Infinity" style="-fx-pref-height: 35px;">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="REGULAR"/>
+                            <String fx:value="ADMIN"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+            </VBox>
+
+            <!-- Email Field (for sign up) -->
+            <VBox spacing="5" fx:id="emailSection" visible="false" managed="false">
+                <Label text="Email (Optional):" styleClass="field-label" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="emailField" promptText="Enter email address" styleClass="login-field"
+                          style="-fx-pref-height: 35px; -fx-font-size: 14px;"/>
+            </VBox>
+        </VBox>
+
+        <!-- Buttons -->
+        <HBox spacing="15" alignment="CENTER">
+            <Button fx:id="loginButton" text="Sign In" 
+                    styleClass="primary-button" prefWidth="120" prefHeight="35"
+                    style="-fx-background-color: #007ACC; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+            <Button fx:id="toggleButton" text="Sign Up" 
+                    styleClass="secondary-button" prefWidth="120" prefHeight="35"
+                    style="-fx-background-color: #E1E1E1; -fx-text-fill: #333; -fx-font-size: 14px;"/>
+        </HBox>
+    </VBox>
+
+    <!-- Main Application View -->
+    <BorderPane fx:id="mainView" visible="false" managed="false">
+
+        <top>
+            <VBox spacing="0">
+                <!-- Menu Bar -->
+                <MenuBar>
+                    <Menu text="File">
+                        <MenuItem fx:id="createFileMenuItem" text="Create File" onAction="#handleCreateFile"/>
+                        <MenuItem text="Delete" onAction="#deleteSelected"/>
+                        <MenuItem text="Rename" onAction="#handleRenameFile"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem fx:id="refreshMenuItem" text="Refresh" onAction="#handleRefresh"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem text="Exit"/>
+                    </Menu>
+                    
+                    <Menu text="Edit">
+                        <MenuItem text="Add Text to File" onAction="#handleAddTextToFile"/>
+                        <MenuItem text="Refresh" onAction="#handleRefresh"/>
+                    </Menu>
+                    
+                    <!-- Database Menu (Admin Features) -->
+                    <Menu fx:id="databaseMenu" text="Database" disable="true">
+                        <MenuItem fx:id="userMgmtMenuItem" text="User Management" onAction="#handleUserManagement"/>
+                        <MenuItem fx:id="viewLogsMenuItem" text="View Activity Logs" onAction="#handleViewLogs"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem fx:id="signOutMenuItem" text="Sign Out" onAction="#handleSignOut"/>
+                    </Menu>
+                    
+                    <Menu text="Help">
+                        <MenuItem fx:id="helpMenuItem" text="About" onAction="#handleHelp"/>
+                    </Menu>
+                </MenuBar>
+
+                <!-- Toolbar -->
+                <ToolBar>
+                    <Button text="📁 New" onAction="#handleCreateFile" style="-fx-font-size: 12px;">
+                        <tooltip><Tooltip text="Create a new file (Ctrl+N)"/></tooltip>
+                    </Button>
+                    
+                    <Button text="🗑️ Delete" onAction="#deleteSelected" style="-fx-font-size: 12px;">
+                        <tooltip><Tooltip text="Delete selected files (Delete key)"/></tooltip>
+                    </Button>
+                    
+                    <Button text="✏️ Rename" onAction="#handleRenameFile" style="-fx-font-size: 12px;">
+                        <tooltip><Tooltip text="Rename selected file (F2)"/></tooltip>
+                    </Button>
+                    
+                    <Separator orientation="VERTICAL"/>
+                    
+                    <Button text="📝 Add Text" onAction="#handleAddTextToFile" style="-fx-font-size: 12px;">
+                        <tooltip><Tooltip text="Add text to selected file"/></tooltip>
+                    </Button>
+                    
+                    <Button text="🔄 Refresh" onAction="#handleRefresh" style="-fx-font-size: 12px;">
+                        <tooltip><Tooltip text="Refresh file list (F5)"/></tooltip>
+                    </Button>
+                    
+                    <Separator orientation="VERTICAL"/>
+                    
+                    <Button text="📂 Change Dir" fx:id="chooseDir" style="-fx-font-size: 12px;">
+                        <tooltip><Tooltip text="Change working directory"/></tooltip>
+                    </Button>
+                    
+                    <!-- Spacer -->
+                    <Region HBox.hgrow="ALWAYS"/>
+                    
+                    <!-- User Info -->
+                    <Label fx:id="userLabel" text="Not logged in" 
+                           style="-fx-font-weight: bold; -fx-padding: 0 10 0 10; -fx-background-color: #f0f0f0; -fx-background-radius: 5px;"/>
+                </ToolBar>
+
+                <!-- Search Bar -->
+                <HBox spacing="10" style="-fx-padding: 8px; -fx-background-color: #f8f8f8;">
+                    <Label text="🔍" style="-fx-font-size: 16px;"/>
+                    <TextField fx:id="searchField" promptText="Search files... (Ctrl+F)" 
+                              HBox.hgrow="ALWAYS" style="-fx-pref-height: 30px;"/>
+                    <Label text="Files:" style="-fx-font-weight: bold;"/>
+                </HBox>
+            </VBox>
+        </top>
+
+        <center>
+            <!-- Main Content Split Pane -->
+            <SplitPane dividerPositions="0.7" style="-fx-background-color: white;">
+                
+                <!-- File Table -->
+                <TableView fx:id="table" style="-fx-selection-bar: #007ACC; -fx-selection-bar-non-focused: #CCCCCC;">
+                    <columns>
+                        <TableColumn text="📄 Name" prefWidth="300" sortable="true">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="name"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        
+                        <TableColumn text="📊 Size" prefWidth="100" sortable="true">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="size"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        
+                        <TableColumn text="📅 Modified" prefWidth="180" sortable="true">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="modified"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        
+                        <TableColumn text="🏷️ Type" prefWidth="120" sortable="true">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="type"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                    </columns>
+                    <placeholder>
+                        <Label text="📂 No files found" style="-fx-font-size: 16px; -fx-text-fill: #888;"/>
+                    </placeholder>
+                </TableView>
+
+                <!-- File Preview Panel -->
+                <VBox spacing="5" minWidth="300" maxWidth="500" prefWidth="350" 
+                      style="-fx-background-color: #fafafa; -fx-padding: 10px;">
+                    
+                    <Label text="📖 File Preview" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                    <Separator/>
+                    
+                    <TextArea fx:id="filePreviewArea" 
+                             editable="false" 
+                             wrapText="true" 
+                             VBox.vgrow="ALWAYS"
+                             promptText="Select a file to preview its contents..."
+                             style="-fx-font-family: 'Courier New', monospace; -fx-font-size: 12px; -fx-background-color: white;"/>
+                    
+                    <HBox spacing="5" alignment="CENTER_LEFT">
+                        <Label text="💡" style="-fx-font-size: 12px;"/>
+                        <Label text="Double-click files to open them" 
+                               style="-fx-font-size: 11px; -fx-text-fill: #666;"/>
+                    </HBox>
+                </VBox>
+            </SplitPane>
+        </center>
+
+        <bottom>
+            <!-- Status Bar -->
+            <HBox spacing="10" alignment="CENTER_LEFT" 
+                  style="-fx-background-color: #f0f0f0; -fx-padding: 8px; -fx-border-color: #d0d0d0; -fx-border-width: 1px 0 0 0;">
+                
+                <Label fx:id="statusLabel" text="Ready" style="-fx-font-size: 12px;"/>
+                
+                <!-- Spacer -->
+                <Region HBox.hgrow="ALWAYS"/>
+                
+                <!-- Activity Indicator -->
+                <ProgressIndicator fx:id="progressIndicator" 
+                                  visible="false" 
+                                  maxWidth="16" 
+                                  maxHeight="16"/>
+                
+                <!-- Database Status -->
+                <Label text="🔗 Database Connected" style="-fx-font-size: 11px; -fx-text-fill: #007ACC;"/>
+                
+                <!-- Version Info -->
+                <Label text="v2.0" style="-fx-font-size: 11px; -fx-text-fill: #888;"/>
+            </HBox>
+        </bottom>
+    </BorderPane>
+
+</StackPane>
