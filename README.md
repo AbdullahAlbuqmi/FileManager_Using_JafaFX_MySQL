@@ -131,13 +131,7 @@ CREATE TABLE file\_activities (
 &nbsp;   FOREIGN KEY (user\_id) REFERENCES users(id)
 
 );
-
-
-
-
-
-
-
+```
 \## 🔧 Configuration ########################################
 
 1\. Database Configuration
